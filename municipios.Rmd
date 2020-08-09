@@ -1,0 +1,92 @@
+---
+title: "Municípios do estado do Rio de Janeiro"
+resource_files:
+- www/shape_limites_seg_simple/lm_dp_2019_simple.shx
+- www/shape_limites_seg_simple/lm_dp_2019_simple.prj
+runtime: shiny
+
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    source_code: embed
+    
+---
+
+
+```{r global, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(sf)
+library(rgdal)
+library(rgeos)
+# https://cran.r-project.org/web/packages/geobr/vignettes/intro_to_geobr.html
+library(geobr)
+library(ggthemes)
+library(shiny)
+
+df_rj <- read_municipality( code_muni = "RJ", year= 2018) %>% 
+         mutate(name_muni=str_replace_all(name_muni, " De "," de ")) %>% 
+         mutate(name_muni=str_replace_all(name_muni, " Do "," do ")) %>% 
+         mutate(name_muni=str_replace_all(name_muni, " Dos "," dos "))
+
+df_municipios_rj <- df_rj$name_muni %>% fct_inorder()
+
+```
+
+```{r}
+ui <- fluidPage(
+  titlePanel("Título"),
+
+  sidebarLayout(
+    sidebarPanel("Painel lateral"),
+    mainPanel("Painel principal")
+  )
+)
+
+```
+
+
+## Column {.sidebar}
+
+```{r}
+ui <- fluidPage(selectInput("municipio",label = "Selecione o município", choices = df_municipios_rj))
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+
+
+```
+
+## Row {data-height=600}
+
+### 
+
+```{r}
+df_rj %>% ggplot() +
+    geom_sf(color="#FEBF57", size=.15, show.legend = FALSE) +
+    theme_minimal() +
+    labs(x = NULL,
+         Y = NULL)
+```
+
+
+```{r}
+# selected_uf <- c("Angra dos Reis")
+# df_rj %>% 
+#   ggplot() +
+#     geom_sf() +
+#     theme_map() + 
+#     geom_sf(fill = "red", filter(data = df_rj, df_rj$name_muni %in% selected_uf)) +
+#     labs(x = NULL, 
+#          y = NULL,
+#          title = "Municípios do Rio de Janeiro, 2018")
+#   
+
+
+```
+
+
