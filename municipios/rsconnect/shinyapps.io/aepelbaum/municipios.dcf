@@ -1,0 +1,12 @@
+name: municipios
+title: municipios
+username:
+account: aepelbaum
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2657990
+bundleId: 3498614
+url: https://aepelbaum.shinyapps.io/municipios/
+when: 1597088929.35588
+asMultiple: FALSE
+asStatic: FALSE
