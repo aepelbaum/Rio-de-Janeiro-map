@@ -8,12 +8,8 @@
 #
 
 library(tidyverse)
-library(sf)
-library(rgdal)
-library(rgeos)
 # https://cran.r-project.org/web/packages/geobr/vignettes/intro_to_geobr.html
 library(geobr)
-library(ggthemes)
 library(shiny)
 
 df_rj <- read_municipality( code_muni = "RJ", year= 2018) %>% 
