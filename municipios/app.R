@@ -23,7 +23,7 @@ df_rj <- read_municipality( code_muni = "RJ", year= 2018) %>%
 
 df_municipios_rj <- df_rj$name_muni %>% fct_inorder()
 
-# Define UI for application that draws a histogram
+# Define UI for application that draws a map
 ui <- fluidPage(
 
     # Application title
@@ -32,21 +32,21 @@ ui <- fluidPage(
     sidebarLayout(
       sidebarPanel(
         selectInput("municipio",
-                    label = "Selecione o município",
+                    label = "Selecione um município",
                     choices = df_municipios_rj, selected = "Rio de Janeiro")
       ),
       
-      # Show a plot of the generated distribution
+      # Show map
       mainPanel(
-        plotOutput("mapPlot")
+        plotOutput("drawMap")
       )
     )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw a map
 server <- function(input, output) {
 
-    output$mapPlot <- renderPlot({
+    output$drawMap <- renderPlot({
         df_rj %>% ggplot() +
             geom_sf(color="#FEBF57", size=.15, show.legend = FALSE) +
             geom_sf(fill = "red", data = df_rj %>% filter(name_muni == input$municipio)) + 
