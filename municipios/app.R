@@ -48,11 +48,10 @@ server <- function(input, output) {
 
     output$drawMap <- renderPlot({
         df_rj %>% ggplot() +
-            geom_sf(color="#FEBF57", size=.15, show.legend = FALSE) +
-            geom_sf(fill = "red", data = df_rj %>% filter(name_muni == input$municipio)) + 
+            geom_sf(size=.15, show.legend = FALSE) +
+            geom_sf(fill = "blue", data = df_rj %>% filter(name_muni == input$municipio)) + 
             theme_minimal() +
-            labs(x = NULL,
-                 Y = NULL)
+            coord_sf(datum = NA)
     })
 }
 
