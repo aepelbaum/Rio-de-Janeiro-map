@@ -23,17 +23,17 @@ df_municipios_rj <- df_rj$name_muni %>% fct_inorder()
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Municípios do Rio de Janeiro"),
+    titlePanel("Índices dos municípios do Rio de Janeiro"),
 
     sidebarLayout(
       sidebarPanel(
-        selectInput("municipio",
-                    label = "Selecione um município",
-                    choices = df_municipios_rj, selected = "Rio de Janeiro"),
-        radioButtons("indice", label = "Selecione um índice", c("Normal" = "norm",
-                                                                "Uniform" = "unif",
-                                                                "Log-normal" = "lnorm",
-                                                                "Exponential" = "exp"), selected = 1)
+        radioButtons("indice", label = "Selecione", c("Área" = "area",
+                                                                "Densidade demográfica" = "dens_demo",
+                                                                "Escolaridade" = "escolaridade",
+                                                                "IDH" = "idh",
+                                                                "Mortalidade infantil (mortes por mil nascimentos)" = "mortalidade_infantil",
+                                                                "População" = "populacao"), 
+                     selected = 1)
       ),
       
       # Show map
