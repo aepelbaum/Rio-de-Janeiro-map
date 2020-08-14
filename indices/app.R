@@ -66,31 +66,37 @@ server <- function(input, output) {
         fill_var <-  input$indice
         if (input$log)
           fill_var  <-  str_c(fill_var, "_log")
-        if(input$indice == "area")
+        if(input$indice == "area") {
           fill_label <-  "Área"
           high_color <-  "yellow"
-        if(input$indice == "densidade_demografica_2010")
+        }  
+        if(input$indice == "densidade_demografica_2010") {
           fill_label <-  "Densidade demográfica"
           high_color <-  "green"
-        if(input$indice == "escolaridade_2010")
+    }
+        if(input$indice == "escolaridade_2010") {
           fill_label <-  "Escolaridade"
           high_color <-  "blue"
-        if(input$indice == "idh_municipal_2010")
+        }  
+        if(input$indice == "idh_municipal_2010") {
           fill_label <-  "IDH"
           high_color <-  "purple"
-        if(input$indice == "mortalidade_infantil_mortes_por_mil_nascimentos_2017")
+        }
+        if(input$indice == "mortalidade_infantil_mortes_por_mil_nascimentos_2017") {
           fill_label <-  "Mortalidade infantil (mortes por mil nascimentos)"
           high_color <-  "red"
-        if(input$indice == "populacao")
+        }  
+        if(input$indice == "populacao") {
           fill_label <-  "População"
           high_color <-  "pink"
+        }  
         sf_rj_indice %>%
                   ggplot() +
                   geom_sf(aes_string(fill = fill_var), color= "black", size=.15) +
                   scale_fill_continuous(type = "gradient", low = "white", high = high_color, name = fill_label, label = scales::comma) +
                   coord_sf(datum = NA) +
-                  labs(subtitle="Índices dos municípios do RIo de Janeiro", size=8) +          
-                  theme_minimal() 
+                  theme(legend.position = "bottom", legend.direction = "vertical")
+                  
     })
 }
 
