@@ -29,11 +29,7 @@ ui <- fluidPage(
       sidebarPanel(
         selectInput("municipio",
                     label = "Selecione um município",
-                    choices = df_municipios_rj, selected = "Rio de Janeiro"),
-        radioButtons("indice", label = "Selecione um índice", c("Normal" = "norm",
-                                                                "Uniform" = "unif",
-                                                                "Log-normal" = "lnorm",
-                                                                "Exponential" = "exp"), selected = 1)
+                    choices = df_municipios_rj, selected = "Rio de Janeiro")
       ),
       
       # Show map

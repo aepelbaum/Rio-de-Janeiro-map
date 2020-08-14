@@ -15,7 +15,13 @@ library(shiny)
 #Lê CSV com indices dos municípios do Rio de Janeiro
 df_indice <- read_csv2("../data/dados-rj.csv", col_names = TRUE,
                        locale = locale(encoding = "ISO-8859-1"), col_types = NULL) %>% 
-  rename(code_muni = codigo_municipio)
+  rename(code_muni = codigo_municipio) %>% 
+  mutate(area_log=log1p(area)) %>% 
+  mutate(densidade_demografica_2010_log=log1p(densidade_demografica_2010)) %>% 
+  mutate(escolaridade_2010_log=log1p(escolaridade_2010)) %>% 
+  mutate(idh_municipal_2010_log=log1p(idh_municipal_2010)) %>% 
+  mutate(mortalidade_infantil_mortes_por_mil_nascimentos_2017_log=log1p(mortalidade_infantil_mortes_por_mil_nascimentos_2017)) %>% 
+  mutate(populacao_log=log1p(populacao)) 
 
 df_rj <- read_municipality( code_muni = "RJ", year= 2018) %>% 
   mutate(name_muni=str_replace_all(name_muni, " De "," de ")) %>% 
@@ -24,7 +30,7 @@ df_rj <- read_municipality( code_muni = "RJ", year= 2018) %>%
 
 df_municipios_rj <- df_rj$name_muni %>% fct_inorder()
 
-df_rj_indice <- df_rj %>% 
+sf_rj_indice <- df_rj %>% 
   left_join(df_indice, by = "code_muni")
 
 # Define UI for application that draws a map
@@ -35,16 +41,18 @@ ui <- fluidPage(
 
     sidebarLayout(
       sidebarPanel(
-        radioButtons("indice", label = "Selecione", c("Área" = "area",
-                                                                "Densidade demográfica" = "dens_demo",
-                                                                "Escolaridade" = "escolaridade",
-                                                                "IDH" = "idh",
-                                                                "Mortalidade infantil (mortes por mil nascimentos)" = "mortalidade_infantil",
-                                                                "População" = "populacao"), 
-                     selected = 1)
+        radioButtons("indice", label = "Selecione",
+                     choices = list("Área" = "area",
+                                    "Densidade demográfica" = "densidade_demografica_2010",
+                                    "Escolaridade" = "escolaridade_2010",
+                                    "IDH" = "idh_municipal_2010",
+                                    "Mortalidade infantil (mortes por mil nascimentos)" = "mortalidade_infantil_mortes_por_mil_nascimentos_2017",
+                                    "População" = "populacao"), 
+                     selected = "area"),
+        checkboxInput("log", label = "Log", value = FALSE, width = NULL)
       ),
       
-      # Show map
+      
       mainPanel(
         plotOutput("drawMap")
       )
@@ -55,14 +63,34 @@ ui <- fluidPage(
 server <- function(input, output) {
 
     output$drawMap <- renderPlot({
-        df_rj %>% ggplot() +
-                  geom_sf(data=df_rj_indice, aes(fill=area), color= "black", size=.15) +
-                  labs(subtitle="População dos municípios do RIo de Janeiro", size=8) +
-                  # scale_fill_distiller(palette = "Blues", name="População", limits = c(min(df_rj_indice$populacao),max(df_rj_indice$populacao))) +
-                  #  scale_fill_continuous(name = "Área", label = scales::comma) +
-                  scale_fill_continuous(low = "white", high = "red",name = "Área", label = scales::comma) +
-                  theme_minimal() #+
-                  #no_axis
+        fill_var <-  input$indice
+        if (input$log)
+          fill_var  <-  str_c(fill_var, "_log")
+        if(input$indice == "area")
+          fill_label <-  "Área"
+          high_color <-  "yellow"
+        if(input$indice == "densidade_demografica_2010")
+          fill_label <-  "Densidade demográfica"
+          high_color <-  "green"
+        if(input$indice == "escolaridade_2010")
+          fill_label <-  "Escolaridade"
+          high_color <-  "blue"
+        if(input$indice == "idh_municipal_2010")
+          fill_label <-  "IDH"
+          high_color <-  "purple"
+        if(input$indice == "mortalidade_infantil_mortes_por_mil_nascimentos_2017")
+          fill_label <-  "Mortalidade infantil (mortes por mil nascimentos)"
+          high_color <-  "red"
+        if(input$indice == "populacao")
+          fill_label <-  "População"
+          high_color <-  "pink"
+        sf_rj_indice %>%
+                  ggplot() +
+                  geom_sf(aes_string(fill = fill_var), color= "black", size=.15) +
+                  scale_fill_continuous(type = "gradient", low = "white", high = high_color, name = fill_label, label = scales::comma) +
+                  coord_sf(datum = NA) +
+                  labs(subtitle="Índices dos municípios do RIo de Janeiro", size=8) +          
+                  theme_minimal() 
     })
 }
 
